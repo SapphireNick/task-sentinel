@@ -1,0 +1,37 @@
+{
+  "dag_id": "example_pipeline",
+  "description": "Example data processing pipeline",
+  "schedule": "0 2 * * *",
+  "start_date": "2025-01-01T00:00:00Z",
+  "max_active_runs": 1,
+  "default_args": {
+    "retries": 3,
+    "retry_delay": "5m",
+    "timeout": "30m"
+  },
+  "tasks": [
+    {
+      "task_id": "extract_data",
+      "type": "shell",
+      "command": "python extract.py",
+      "depends_on": []
+    },
+    {
+      "task_id": "transform_data",
+      "type": "shell",
+      "command": "python transform.py",
+      "depends_on": [
+        "extract_data"
+      ],
+      "retries": 5
+    },
+    {
+      "task_id": "load_data",
+      "type": "shell",
+      "command": "python load.py",
+      "depends_on": [
+        "transform_data"
+      ]
+    }
+  ]
+}
