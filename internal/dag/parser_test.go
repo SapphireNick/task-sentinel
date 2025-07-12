@@ -1,11 +1,13 @@
 package dag
 
 import (
+	"os"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestValidDag(t *testing.T) {
@@ -235,6 +237,59 @@ func TestValidDag(t *testing.T) {
 			assert.Equal(t, tc.expected, *result)
 		})
 	}
+}
+
+func TestValidDagFromFile(t *testing.T) {
+	expectedTime, _ := time.Parse(time.RFC3339, "2025-01-01T00:00:00Z")
+	testRetry := 3
+	testTaskRetry := 5
+	testRetryDelay := TaskDuration(5 * time.Minute)
+	testTimeout := TaskDuration(30 * time.Minute)
+
+	expected := Dag{
+		Id:            "example_pipeline",
+		Description:   "Example data processing pipeline",
+		Schedule:      "0 2 * * *",
+		StartDate:     expectedTime,
+		MaxActiveRuns: 1,
+		DefaultArgs: &TaskArgs{
+			Retries:    &testRetry,
+			RetryDelay: &testRetryDelay,
+			TimeOut:    &testTimeout,
+		},
+		Tasks: []Task{
+			{
+				TaskId:    "extract_data",
+				Type:      TaskTypeShell,
+				Command:   "python extract.py",
+				DependsOn: []string{},
+			},
+			{
+				TaskId:    "transform_data",
+				Type:      TaskTypeShell,
+				Command:   "python transform.py",
+				DependsOn: []string{"extract_data"},
+				Retries:   &testTaskRetry,
+			},
+			{
+				TaskId:    "load_data",
+				Type:      TaskTypeShell,
+				Command:   "python load.py",
+				DependsOn: []string{"transform_data"},
+			},
+		},
+	}
+
+	parser := NewJSONParser()
+	file, err := os.Open("./test/test_dag_config.json")
+	require.NoError(t, err, "failed to open test config file")
+
+	result, err := parser.Parse(file)
+	if err != nil {
+		t.Error(err)
+	}
+
+	assert.Equal(t, expected, *result)
 }
 
 func TestInvalidDag(t *testing.T) {
