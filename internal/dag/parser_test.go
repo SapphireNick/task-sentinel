@@ -265,8 +265,13 @@ func TestInvalidDag(t *testing.T) {
 		},
 		{
 			name:     "Missing tasks",
-			expected: "invalid dag config: tasks is required",
 			config:   `{"dag_id":"dag-1","description":"description","schedule":"0 * * * *","start_date":"2025-07-11T14:00:00Z","max_active_runs":1,"default_args":{"retries":3,"retry_delay":"15s","timeout":"5m"}}`,
+			expected: "invalid dag config: tasks is required",
+		},
+		{
+			name:     "Circular dependency",
+			config:   `{"dag_id":"dag-1","description":"description","schedule":"0 * * * *","start_date":"2025-07-11T14:00:00Z","max_active_runs":1,"default_args":{"retries":3,"retry_delay":"15s","timeout":"5m"},"tasks":[{"task_id":"A","type":"shell","command":"echo 'hello'","depends_on":["B"]},{"task_id":"B","type":"shell","command":"echo 'hello'","depends_on":["C"]},{"task_id":"C","type":"shell","command":"echo 'hello'","depends_on":["A"]}]}`,
+			expected: "invalid dag config: found circular dependency: A<-C<-B<-A",
 		},
 	}
 	parser := NewJSONParser()

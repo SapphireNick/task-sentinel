@@ -1,6 +1,10 @@
 package dag
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+	"strings"
+)
 
 type Validator struct{}
 
@@ -77,44 +81,42 @@ func (v *Validator) checkForCircularDependency(tasks *[]Task) error {
 		graph[task.TaskId] = task.DependsOn
 	}
 
-	visited := make(map[string]bool, len(*tasks))
-	onStack := make(map[string]bool, len(*tasks))
-	parent := make(map[string]string)
-
-	getCycle := func(task string) error {
-		cycleMessage := "found circular dependency: ["
-		for parent[task] != task {
-			cycleMessage += task + "->"
-			task = parent[task]
-		}
-		return errors.New(cycleMessage)
-	}
+	const (
+		unvisited = iota
+		visiting
+		done
+	)
+	state := make(map[string]int, len(*tasks))
+	stack := []string{}
 
 	var dfs func(node string) error
 	dfs = func(node string) error {
-		if visited[node] {
-			return getCycle(node)
-		}
-		if onStack[node] {
-			return nil
-		}
-
-		visited[node] = true
-		onStack[node] = true
+		state[node] = visiting
+		stack = append(stack, node)
 
 		for _, dep := range graph[node] {
-			parent[dep] = node
-			if err := dfs(dep); err != nil {
-				return err
+			switch state[dep] {
+			case unvisited:
+				if err := dfs(dep); err != nil {
+					return err
+				}
+			case visiting:
+				cycle := []string{dep}
+				for i := len(stack) - 1; i >= 0 && stack[i] != dep; i-- {
+					cycle = append(cycle, stack[i])
+				}
+				cycle = append(cycle, dep)
+				return fmt.Errorf("found circular dependency: %v", strings.Join(cycle, "<-"))
 			}
 		}
 
-		onStack[node] = false
+		stack = stack[:len(stack)-1]
+		state[node] = done
 		return nil
 	}
 
 	for _, task := range *tasks {
-		if !visited[task.TaskId] {
+		if state[task.TaskId] == unvisited {
 			if err := dfs(task.TaskId); err != nil {
 				return err
 			}
