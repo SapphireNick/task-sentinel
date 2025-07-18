@@ -13,7 +13,7 @@ func NewValidator() *Validator {
 }
 
 func (v *Validator) Validate(dag *Dag) error {
-	// StartDate, RetryDelay, TimeOut and Type get validated on Unmarshall
+	// StartDate, RetryDelay, Timeout and Type get validated on Unmarshall
 	if dag.Id == "" {
 		return errors.New("dag_id is required")
 	}

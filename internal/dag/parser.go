@@ -66,8 +66,8 @@ func (p *JSONParser) applyDefaults(dag *Dag) {
 		}
 
 		if task.Timeout == nil {
-			if dag.DefaultArgs != nil && dag.DefaultArgs.TimeOut != nil {
-				timeoutCopy := *dag.DefaultArgs.TimeOut
+			if dag.DefaultArgs != nil && dag.DefaultArgs.Timeout != nil {
+				timeoutCopy := *dag.DefaultArgs.Timeout
 				task.Timeout = &timeoutCopy
 			} else {
 				task.Timeout = new(TaskDuration)

@@ -37,7 +37,7 @@ func TestValidDag(t *testing.T) {
 				DefaultArgs: &TaskArgs{
 					Retries:    &testRetry,
 					RetryDelay: &testRetryDelay,
-					TimeOut:    &testTimeout,
+					Timeout:    &testTimeout,
 				},
 				Tasks: []Task{
 					{
@@ -64,7 +64,7 @@ func TestValidDag(t *testing.T) {
 				DefaultArgs: &TaskArgs{
 					Retries:    &testRetry,
 					RetryDelay: &testRetryDelay,
-					TimeOut:    &testTimeout,
+					Timeout:    &testTimeout,
 				},
 				Tasks: []Task{
 					{
@@ -100,7 +100,7 @@ func TestValidDag(t *testing.T) {
 				DefaultArgs: &TaskArgs{
 					Retries:    &testRetry,
 					RetryDelay: &testRetryDelay,
-					TimeOut:    &testTimeout,
+					Timeout:    &testTimeout,
 				},
 				Tasks: []Task{
 					{
@@ -168,7 +168,7 @@ func TestValidDag(t *testing.T) {
 				DefaultArgs: &TaskArgs{
 					Retries:    nil,
 					RetryDelay: &testRetryDelay,
-					TimeOut:    &testTimeout,
+					Timeout:    &testTimeout,
 				},
 				Tasks: []Task{
 					{
@@ -204,7 +204,7 @@ func TestValidDag(t *testing.T) {
 				DefaultArgs: &TaskArgs{
 					Retries:    &testRetry,
 					RetryDelay: nil,
-					TimeOut:    &testTimeout,
+					Timeout:    &testTimeout,
 				},
 				Tasks: []Task{
 					{
@@ -240,7 +240,7 @@ func TestValidDag(t *testing.T) {
 				DefaultArgs: &TaskArgs{
 					Retries:    &testRetry,
 					RetryDelay: &testRetryDelay,
-					TimeOut:    nil,
+					Timeout:    nil,
 				},
 				Tasks: []Task{
 					{
@@ -298,7 +298,7 @@ func TestValidDagFromFile(t *testing.T) {
 		DefaultArgs: &TaskArgs{
 			Retries:    &testRetry,
 			RetryDelay: &testRetryDelay,
-			TimeOut:    &testTimeout,
+			Timeout:    &testTimeout,
 		},
 		Tasks: []Task{
 			{

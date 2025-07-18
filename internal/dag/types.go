@@ -19,7 +19,7 @@ type Dag struct {
 type TaskArgs struct {
 	Retries    *int          `json:"retries"`
 	RetryDelay *TaskDuration `json:"retry_delay"`
-	TimeOut    *TaskDuration `json:"timeout"`
+	Timeout    *TaskDuration `json:"timeout"`
 }
 
 type Task struct {
