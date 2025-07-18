@@ -13,13 +13,13 @@
     {
       "task_id": "extract_data",
       "type": "shell",
-      "command": "python extract.py",
+      "command": "echo 'python extract.py'",
       "depends_on": []
     },
     {
       "task_id": "transform_data",
       "type": "shell",
-      "command": "python transform.py",
+      "command": "echo 'python transform.py'",
       "depends_on": [
         "extract_data"
       ],
@@ -28,7 +28,7 @@
     {
       "task_id": "load_data",
       "type": "shell",
-      "command": "python load.py",
+      "command": "echo 'python load.py'",
       "depends_on": [
         "transform_data"
       ]
